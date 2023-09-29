@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Models\Topic;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Validator;
 
 class TopicController extends Controller
 {
@@ -27,7 +28,15 @@ class TopicController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $validated = Validator::make($request->all(), [
+            'name' => 'required',
+            'address' => 'required',
+            'contact' => 'required'
+        ]);
+
+        $topic = Topic::create($validated->validate());
+
+        return response()->json($topic, 201);
     }
 
     /**
@@ -41,9 +50,25 @@ class TopicController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
+    public function update(Request $request, Topic $topic)
     {
-        //
+
+        try {
+            $validated = Validator::make($request->all(), [
+                'name' => 'required',
+                'address' => 'required',
+                'contact' => 'required'
+            ]);
+
+
+            $topic->update($validated->validate());
+
+            return response()->json($topic, 200);
+        } catch (\Throwable $th) {
+            return response()->json([
+                'message' => $th->getMessage()
+            ], 201);
+        }
     }
 
     /**

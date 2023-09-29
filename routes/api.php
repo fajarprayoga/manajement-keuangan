@@ -33,5 +33,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
 
     Route::prefix('topics')->controller(TopicController::class)->group(function () {
         Route::get('/', 'index');
+        Route::post('/', 'store');
+        Route::patch('/{id}/edit', 'update');
     });
 });
