@@ -16,9 +16,9 @@ class TopicController extends Controller
     {
         try {
             $topics = Topic::all();
-            return response()->json($topics, 200);
+            return $this->responseMessage($topics, 'Sukses');
         } catch (\Throwable $th) {
-            return response()->json($th->getMessage(), 404);
+            return $this->responseMessage($th->getTraceAsString(), $th->getMessage(), 400);
             //throw $th;
         }
     }
@@ -28,15 +28,19 @@ class TopicController extends Controller
      */
     public function store(Request $request)
     {
-        $validated = Validator::make($request->all(), [
-            'name' => 'required',
-            'address' => 'required',
-            'contact' => 'required'
-        ]);
+        try {
+            $validated = Validator::make($request->all(), [
+                'name' => 'required',
+                'address' => 'required',
+                'contact' => 'required'
+            ]);
 
-        $topic = Topic::create($validated->validate());
-
-        return response()->json($topic, 201);
+            $topic = Topic::create($validated->validate());
+            //code...
+            return $this->responseMessage($topic, 'Topic berhasil ditambahkan');
+        } catch (\Throwable $th) {
+            return $this->responseMessage($th->getTraceAsString(), $th->getMessage(), 400);
+        }
     }
 
     /**
@@ -44,13 +48,19 @@ class TopicController extends Controller
      */
     public function show(string $id)
     {
-        //
+        try {
+            $topics = Topic::with('transactions')->get();
+            return $this->responseMessage($topics, 'Sukses');
+        } catch (\Throwable $th) {
+            return $this->responseMessage($th->getTraceAsString(), $th->getMessage(), 400);
+            //throw $th;
+        }
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Topic $topic)
+    public function update(Request $request, $id)
     {
 
         try {
@@ -61,13 +71,12 @@ class TopicController extends Controller
             ]);
 
 
-            $topic->update($validated->validate());
+            $topic = Topic::find($id)->update($request->all());
 
-            return response()->json($topic, 200);
+            // return response()->json($topic, 200);
+            return $this->responseMessage($topic, 'Update berhasil');
         } catch (\Throwable $th) {
-            return response()->json([
-                'message' => $th->getMessage()
-            ], 201);
+            return $this->responseMessage($th->getTraceAsString(), $th->getMessage(), 400);
         }
     }
 
@@ -76,6 +85,25 @@ class TopicController extends Controller
      */
     public function destroy(string $id)
     {
-        //
+        $topic = Topic::find($id)->delete();
+        try {
+            if ($topic) {
+                return $this->responseMessage($topic, 'Data dihapus');
+            } else {
+                return $this->responseMessage($topic, 'Data gagal dihapus', 400);
+            }
+        } catch (\Throwable $th) {
+            return $this->responseMessage($th->getTraceAsString(), $th->getMessage(), 400);
+        }
+    }
+
+    function responseMessage($data = [], $message = '', $code = 200)
+    {
+        $response = [
+            'message' => $message,
+            'data' => $data
+        ];
+
+        return response()->json($response, $code);
     }
 }
