@@ -15,4 +15,9 @@ class Topic extends Model
         'contact',
         'image',
     ];
+
+    public function transactions()
+    {
+        return $this->hasMany(Transaction::class, 'topic_id', 'id',);
+    }
 }

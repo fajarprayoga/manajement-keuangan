@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use App\Models\User;
 
 class Transaction extends Model
 {
@@ -15,7 +16,22 @@ class Transaction extends Model
         'topic_id',
         'transaction_date',
         'amount',
-        'type',
+        'type', //income || expense
         'description',
     ];
+
+    public function users()
+    {
+        return $this->hasMany(User::class, 'id', 'user_id');
+    }
+
+    public function topics()
+    {
+        return $this->hasMany(Topic::class, 'id', 'topic_id');
+    }
+
+    public function categories()
+    {
+        return $this->hasMany(Category::class, 'id', 'category_id');
+    }
 }

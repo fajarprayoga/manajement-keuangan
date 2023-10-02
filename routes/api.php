@@ -3,6 +3,7 @@
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\CategoryController;
 use App\Http\Controllers\Api\TopicController;
+use App\Http\Controllers\api\TransactionController;
 use App\Http\Controllers\Api\UserController;
 use App\Models\User;
 use Illuminate\Http\Request;
@@ -29,9 +30,21 @@ Route::middleware(['auth:sanctum'])->group(function () {
 
     Route::prefix('categories')->controller(CategoryController::class)->group(function () {
         Route::get('/', 'index');
+        Route::post('/', 'store');
+        Route::patch('/edit/{id}', 'update');
     });
 
     Route::prefix('topics')->controller(TopicController::class)->group(function () {
         Route::get('/', 'index');
+        Route::get('/{id}', 'show');
+        Route::post('/', 'store');
+        Route::patch('/edit/{id}', 'update');
+    });
+
+    Route::prefix('transactions')->controller(TransactionController::class)->group(function () {
+        Route::get('/', 'index');
+        Route::post('/', 'store');
+        Route::patch('/edit/{id}', 'update');
+        Route::delete('/{id}', 'destroy');
     });
 });
