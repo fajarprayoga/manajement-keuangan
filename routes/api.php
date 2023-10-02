@@ -5,8 +5,6 @@ use App\Http\Controllers\Api\CategoryController;
 use App\Http\Controllers\Api\TopicController;
 use App\Http\Controllers\api\TransactionController;
 use App\Http\Controllers\Api\UserController;
-use App\Models\User;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
 /*
